@@ -14,16 +14,27 @@ Insgesamt durchläuft dieser Prozess 7 Phasen, diese sind nicht fix definiert un
 - Detaillierter Plan für Zielerreichung
 - (Teststrategie)
 
+
 **Analyse**
+- Anforderungen sammeln
+- Funktionale und Nicht funktionale Anforderungen analysieren
+- Use Case Szenarien
+- User Stories
+- Personas
+- Dokumentation
+- Feedback Loop
+
 
 **Design/Entwerfen**
 - UX/UI Design
-- Prototyp und Mocups
+- Prototyp und Mockups
 - Design und Komponenten festlegen
+
 
 **Implementieren**
 - Schreiben des Codes
 - Unit tests
+
 
 **Testen**
 - Test Planung und Strategie umsetzen
@@ -31,11 +42,13 @@ Insgesamt durchläuft dieser Prozess 7 Phasen, diese sind nicht fix definiert un
 - Integration Tests
 - System Tests
 - User Acceptance Tests
+
   
 **Bereitstellen**
 - Code in Produktionsumgebung bereitstellen
 - Zugriff für Benutzer ermöglichen
 - Software in Phasen bereitstellen (z.B Beta Version)
+
 
 **Wartung**
 - Updates und Optimierungen
