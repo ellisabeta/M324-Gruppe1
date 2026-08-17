@@ -1,4 +1,4 @@
-# Technische Infrastruktur:
+# Technische Infrastruktur
 
 **Backend:** Java mit Springboot Framework
 
