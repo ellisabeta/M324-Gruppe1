@@ -77,6 +77,8 @@ Insgesamt durchläuft dieser Prozess 7 Phasen, diese sind nicht fix definiert un
 | Maintain  | Operate |
 | -        | Monitor |
 
+<img src="https://miro.medium.com/v2/resize:fit:828/format:webp/1*d2MmOnSxHxbcyaLOCuO_Aw.jpeg">
+
 ### DevOps Prinzipien: 
 - Zusammenarbeit
 - Automatisierung
@@ -84,7 +86,29 @@ Insgesamt durchläuft dieser Prozess 7 Phasen, diese sind nicht fix definiert un
 - Continuous Delivery (CD)
 - Überwachung und Feedback
 
+DevOps ist ein kontinuierlicher Loop während SDLC ist ein Phasen-prozess.  
+Die Zeile von DevOps und SDLC unterscheiden sich indem, dass DevOps sich auf Geschwindigkeit, Agilität und Kontinuierlichkeit fokussiert und SDLC fokussiert sich auf Qualität, Systematik und Effizienz im Entwicklungsprozess.
+
 ## Definition MVP und Bedeutung im DevOps Lifecycle
+Ein Minimum Viable Product ist die einfachste Version eines Produktes, welches die grundlegende Features beinhaltet. Das Ziel einer MVP ist so schnell wie möglich das Produkt veröffentlichen und echtes User Feedback sammeln, wodurch das Produkt verbessert werden kann.
+
+Kernfunktionen:
+- Time-to-Market verkürzen: schneller live gehen und Wettbewerbsvorteil sichern
+- Risiken minimieren: nur Kernfunktionen entwickeln
+- Direktes Feedback: echtes Nutzerverhalten statt Annahmen
+- Investitionen fokussieren: kein Over-Engineering, sondern messbare Learnings
+
+### Rolle von MVP im DevOps Lifecycle
+| DevOps Lifecycle | MVP |
+| -------- | ------- |
+| Plan     | Es werden nur Features zugelassen, die direkt bei der Kernidee beitragen.    |
+| Code     | Entwickler schreiben minimalen, aber funktionsfähigen Code, da das Feature möglicherweise anhand von Nutzerfeedback verworfen oder angepasst wird.    |
+| Build    | Kleine Code-Änderungen lassen sich schnell bauen und automatisiert testen.   |
+| Test     | Der Fokus liegt auf Kern E2E Tests und Sicherheitsprüfungen, anstatt jede denkbare Edge Case Funktion abzudecken.    |
+| Release  | Über kleinere Testgruppe kann ein Release schneller gemacht werden. |
+| Deploy   | Dank CI/CD installiert der Code die neueste Version automatisiert und risikofrei auf dem Server.  |
+| Operate  | Der Fokus im Betrieb liegtx nicht nur auf Systemstabilität, sondern primär auf dem Sammeln von Nutzer- und Nutzungsdaten. |
+| Monitor  | Das reale Verhalten der Nutzer zeigt, ob das MVP die Erwartungen erfüllt. |
 
 ## Quellen
 - https://aws.amazon.com/de/what-is/sdlc/
@@ -92,3 +116,4 @@ Insgesamt durchläuft dieser Prozess 7 Phasen, diese sind nicht fix definiert un
 - https://www.ibm.com/de-de/think/topics/sdlc
 - https://medium.com/@nalawade1000work/sdlc-vs-devops-25ff2dd0accf
 - https://shwetha.hashnode.dev/sdlc-and-devops-guide-to-building-great-software
+- https://www.atlassian.com/agile/product-management/minimum-viable-product
