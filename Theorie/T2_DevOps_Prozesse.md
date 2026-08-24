@@ -55,11 +55,69 @@ Insgesamt durchläuft dieser Prozess 7 Phasen, diese sind nicht fix definiert un
 - Wartung und Unterstützung
 - Fehler beheben
 - ev. kontinuierliche Integration und kontinuierliche Bereitstellung (CI/CD)
-- 
+
 
 <img width="925" height="500" alt="image" src="https://github.com/user-attachments/assets/7fc7ef84-81fb-4bf8-bd28-27244defa37f" />
 
 <img width="676" height="362" alt="image" src="https://github.com/user-attachments/assets/16b029a5-ce3a-4012-b8e1-bf2188830259" />
+
+## DevOps Lifecycle
+Der DevOps Lifecycle ist ein iterativer Prozess bei der Software Entwicklung und Deployment der aus 8 phasen besteht:
+<img width="960" height="720" alt="image" src="https://github.com/user-attachments/assets/93be373d-abe7-4e7b-a364-303c92292d4b" />
+
+
+**Plan**
+Ziele: Anforderungen überprüfen, Roadmap erstellen, Aufgaben definieren und verteilen, Product backlog
+Key performance indicators (KPIs), service level indicators (SLIs) und service level objectives definieren so dass man später weiss ob eine phase gut läuft.
+
+
+**Code**
+Code schreiben und featuers implementieren. Kleine inkrementelle Veränderungen pushen.
+Code immer vorzu testen und reviewen lassen.<br>
+Ziele: Gute Code Qualität, VSC<br>
+Aktivitäten: Code schreiben, Code reviews, Branches mergen
+
+
+**Build**
+Ziele: Kompilier Fehler früh erkennen<br>
+Aktivitäten: Code Kompilieren, Dependency management, Container images erstellen
+
+
+**Test**
+Nach bugs, Sicherheitslücken/Schwächen und Performance schwächen suchen<br>
+Ziele: Bugs herausfiltern before sie Prod erreichen, gute Code Qualität versichern<br>
+Aktivitäten: Unit testing, integration testing, static code analyse
+
+
+**Release**
+Bei dieser Phase wird versioning und approval gemanaged.<br>
+Ziele: Den release für verschiedene Umgebungen managen<br>
+Aktivitäten: Artefakt Versionierung (Kennzeichnung und Verwaltung von Build Ergebnissen), change management approvals
+
+
+**Deploy**
+Applikation wird auf Prod servers gepushed.<br>
+Ziele: Software dem Benutzer bereitstellen<br>
+Aktivitäten: Inftrastruktur  Bereitstellung, Konfigurations management
+
+
+**Operate**
+Ziele: Möglichst wenig Downtime, Überprüfen und sicherstellen dass alles läuft.<br>
+Aktivitäten: Server patching, Skalierung wenn nötig, DB Management
+
+
+**Monitor**
+Ziele: Fehler sofort feststellen, Fehler analysieren und daraus lernen.<br>
+Aktivitäten: Log analyse, Postmortem schreiben, performance tracking
+
+1. Continuous Development
+2. Continuous Integration
+3. Continuous Testing
+4. Continuous Deployment/Continuous Delivery
+5. Continuous Monitoring
+6. Continuous Feedback
+7. Continuous Operations
+
 
 ## Unterschiede SDLC und DevOps Lifecycle
 
@@ -117,3 +175,4 @@ Kernfunktionen:
 - https://medium.com/@nalawade1000work/sdlc-vs-devops-25ff2dd0accf
 - https://shwetha.hashnode.dev/sdlc-and-devops-guide-to-building-great-software
 - https://www.atlassian.com/agile/product-management/minimum-viable-product
+- https://www.ibm.com/think/topics/devops-lifecycle
