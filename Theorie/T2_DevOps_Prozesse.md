@@ -4,6 +4,7 @@
 Der Softwareentwicklungszyklus ist ein Prozess der von Entwicklungsteams verwendet wird um Zeit und Kosten zu sparen. Dabei definiert man verschiedene Ziele und Aufgaben für jede Phase, während jeder Phase können Entwickler neue Funktionen hinzufügen und Fehler beheben. 
 
 Insgesamt durchläuft dieser Prozess 7 Phasen, diese sind nicht fix definiert und variieren je nach Quelle.
+Jede Phase beeinflusst und überschneidet sich mit den anderen Phasen. Im Gegensatz zu anderen Entwicklungsmethoden ist der DevOps Lifecycle agil und prioritisiert adaptive Planung um frühzeitig Sachen anpassen zu können und kontinuierlich Verbesserungen zu machen.
 
 **Planen**
 - Kosten-Nutzen Analyse
