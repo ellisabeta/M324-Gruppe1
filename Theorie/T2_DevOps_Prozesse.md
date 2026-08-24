@@ -67,47 +67,47 @@ Der DevOps Lifecycle ist ein iterativer Prozess bei der Software Entwicklung und
 <img width="960" height="720" alt="image" src="https://github.com/user-attachments/assets/93be373d-abe7-4e7b-a364-303c92292d4b" />
 
 
-**Plan**
+**Plan**<br>
 Ziele: Anforderungen überprüfen, Roadmap erstellen, Aufgaben definieren und verteilen, Product backlog
 Key performance indicators (KPIs), service level indicators (SLIs) und service level objectives definieren so dass man später weiss ob eine phase gut läuft.
 
 
-**Code**
+**Code**<br>
 Code schreiben und featuers implementieren. Kleine inkrementelle Veränderungen pushen.
 Code immer vorzu testen und reviewen lassen.<br>
 Ziele: Gute Code Qualität, VSC<br>
 Aktivitäten: Code schreiben, Code reviews, Branches mergen
 
 
-**Build**
+**Build**<br>
 Ziele: Kompilier Fehler früh erkennen<br>
 Aktivitäten: Code Kompilieren, Dependency management, Container images erstellen
 
 
-**Test**
+**Test**<br>
 Nach bugs, Sicherheitslücken/Schwächen und Performance schwächen suchen<br>
 Ziele: Bugs herausfiltern before sie Prod erreichen, gute Code Qualität versichern<br>
 Aktivitäten: Unit testing, integration testing, static code analyse
 
 
-**Release**
+**Release**<br>
 Bei dieser Phase wird versioning und approval gemanaged.<br>
 Ziele: Den release für verschiedene Umgebungen managen<br>
 Aktivitäten: Artefakt Versionierung (Kennzeichnung und Verwaltung von Build Ergebnissen), change management approvals
 
 
-**Deploy**
+**Deploy**<br>
 Applikation wird auf Prod servers gepushed.<br>
 Ziele: Software dem Benutzer bereitstellen<br>
 Aktivitäten: Inftrastruktur  Bereitstellung, Konfigurations management
 
 
-**Operate**
+**Operate**<br>
 Ziele: Möglichst wenig Downtime, Überprüfen und sicherstellen dass alles läuft.<br>
 Aktivitäten: Server patching, Skalierung wenn nötig, DB Management
 
 
-**Monitor**
+**Monitor**<br>
 Ziele: Fehler sofort feststellen, Fehler analysieren und daraus lernen.<br>
 Aktivitäten: Log analyse, Postmortem schreiben, performance tracking
 
