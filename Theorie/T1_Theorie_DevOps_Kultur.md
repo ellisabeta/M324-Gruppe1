@@ -29,5 +29,7 @@ M – Measurement: Mit Metriken wird gemessen, wie gut Prozesse funktionieren. S
 S – Sharing: Wissen, Erfahrungen und auch Fehler sollen geteilt und dokumentiert werden, damit andere daraus lernen und dieselben Fehler nicht wiederholen.
 
 ![alt text](image.png)
+
 https://gitlab.com/ch-tbz-it/Stud/m324/-/blob/main/Kultur/CALMS.md?plain=0
+
 ---
