@@ -24,4 +24,6 @@ Man braucht einen continuous integration server der den main repository überwac
 
 Bei continuous delivery ist der trigger manuell aber sobald das deployment gestartet ist braucht es keine manuellen Aktionen mehr. Dafür braucht man wie auch bei Continuous Deployment eine sehr starke Testing Kultur
 
+<img width="960" height="494" alt="image" src="https://github.com/user-attachments/assets/2b1bf54e-eb24-4d96-acb8-638366427fe9" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/f504b4fc-d6d4-4988-aa63-da991d449626" />
 
