@@ -1,4 +1,5 @@
-## Continuous Deployment, Umsetzung
+# T4 Continuous Deployment
+## Definition und Umsetzung
 Continuous Deployment ist ein Angehensweise beim Software engineering bei dem Funktionalitäten regelmässig mittels automatisierten deployments gepushed werden.
 
 Damit das funktioniert braucht es eine gute test coverage, real time Überwachung und starke kontinuierliche integrations pipelines um zu verhindern das bugs in Prod kommen.
@@ -15,6 +16,7 @@ In einer Umgebung, in der datenzentrierte Microservices die Funktionalität bere
 - Starke Testing Kultur, gute Test Qualität
 - guter Dokumentationsprozess
 - Feature Flags, hilfreich um changes mit anderen Abteilungen zu koordinieren.
+
 ## Continuous Deployment vs Continuous Delivery
 Continuous Delivery ist eine Extension von Continuous integration da es automatisch die code changed deployed in eine testing oder prod Umgebung nach der build Phase.
 
@@ -54,10 +56,83 @@ Canary Deployment ist eine Art von Blue Green deployment bei dem nur ein Teil de
 
 Canary Deployments können in zwei Schritten oder linear 
 
+## A/B Testing
+AB Testing wird auch Split-Testing und Bucket-Testing gennant, ist eine Methode, um zwei Versionen einer App oder Website zu vergleichen und anhand statistischer Analysen wird entschieden welche Version besser ist.
+
+<img src="https://images.ctfassets.net/dkgr2j75jrom/5Y2u7cESPGJG0gl5Ia3cIv/e77a99b0e58e56e096e14123861f8b0e/a-b-testing-inpagecontent-a-b-testing-process.png?w=1920&h=1177&q=50&fm=webp&bg=transparent">
+
+## Feature Toggles
+Ein Feature Toggle ist ein Mechanismus, der es Entwicklern ermöglicht, **bestimmte Funktionen ein- oder auszuschalten, ohne den Quellcode zu verändern**. Zum Beispiel um neue Funktionen zunächst für eine Teilmenge der Nutzer bereitstellen, bevor sie vollständig eingeführt werden.
+
+Bei A/B Testing kann man mit den Feature Toggles verschiedene Implementierungen von Funktionen vergleichen und deren Auswirkungen messen.
+
+Beispiel von einem Feature Toggle: Eine Social-Media-App, die „Stories“ nur für 10 % der Nutzer freischaltet.
+
+## Rollback Strategien
+Ein Rollback ist der Prozess, ein System oder eine Anwendung nach einem fehlgeschlagenen Deployment oder einer Änderung in einen vorherigen stabilen Zustand zurückzusetzen.
+
+1. **Manuelles Zurücksetzen**  
+Die einfachste Form des Rollbacks – das manuelle Zurücksetzen von Code oder Infrastruktur.
+
+- Vorteile : Unkompliziert für kleine Systeme.
+- Nachteile : Zeitaufwändig, fehleranfällig, nicht ideal für große oder hochverfügbare Systeme.
+
+2. **Automatisiertes Rollback über CI/CD-Pipelines**  
+CI/CD-Tools wie Jenkins, GitHub Actions oder GitLab können so konfiguriert werden, dass sie Deployments automatisch rückgängig machen, wenn Fehler erkannt werden.
+
+- Vorteile : Schnell und zuverlässig. Reduziert menschliche Fehler.
+- Nachteile : Erfordert sorgfältige Einrichtung und Überwachungslogik.
+
+3. **Blau-Grün-Einsatz**  
+Die neue Version wird in einer parallelen Umgebung (grün) bereitgestellt, während die alte Version (blau) weiterhin aktiv bleibt. Nach der Validierung wird der Datenverkehr umgeschaltet. Der Rollback leitet den Datenverkehr einfach wieder in die blaue Umgebung um.
+
+- Vorteile : Rollback ohne Ausfallzeiten.
+- Nachteile : Verdoppelt vorübergehend die Infrastrukturkosten.
+
+4. **Kanarienvogel-Releases**  
+Veröffentlichen Sie die neue Version zunächst für einen kleinen Prozentsatz der Nutzer. Für einen Rollback muss man die Einführung stoppen und für alle Benutzer zur alten Version zurückkehren.
+
+- Vorteile : Minimiertes Risiko, bessere Beobachtbarkeit.
+- Nachteile : Erfordert eine robuste Überwachungs- und Datenverkehrsaufteilungslogik.
+
+## Continuous Monitoring und Umsetzung
+Die kontinuierliche Überwachung ist die Grundlage dafür, im Geschäftsleben die Aktivitäten des Unternehmens stets im Blick zu behalten.
+Kontinuierliches Monitoring ist die **Echtzeitbeobachtung und -analyse** verschiedener Elemente, darunter Cybersicherheit, Netzwerksicherheit, Systemausfallzeiten, Compliance und betriebliche Effizienz.
+
+- Die kontinuierliche Überwachung wird so zu einem proaktiven Schutzschild gegen potenzielle Bedrohungen und Sicherheitslücken.
+
+Best practice für die Umsetzung von Continuous Monitoring:
+<img src="https://www.motadata.com/storage/blog/blog-content-images/what-are-the-best-practices-for-continuous-monitoring.png">
+
+Für eine kontinuierliche Überwachung muss man:  
+1. **Kennzahlen definieren**
+2. **Schwellenstelle festlegen** (Grenzwerte vordefinieren, die Warnmeldungen auslösen)
+3. **Benachrichtigungen konfigurieren**
+4. **Dashboards optimieren**
+5. **Lärm minimieren** (unnötige Warnmeldungen, Datenrauschen)
+6. **Redundanz reduzieren** (doppelte Messungen von Kennzahlen vermeiden)
+7. **Regelmässige Überprüfung und Anpassung**
+
+## Passwörter sicher speichern
+Passwörter werden gehashed damit sie nicht im Klartext sichtbar für alle sind. Es hat das **SHA256-hash** Algorithmus der Verschlüsselung, nicht rückgängig gemacht werden kann. Es gibt auch Salt hashing, der eine zufällige generierte Zeichenkette - ein Salt erstellt. Oft wird **Bcrypt** verwendet um den Passwort zu Salten und dann noch hashen.
+
+Bei CI/CD dürfen Secrets und Passwörter **nicht** im Klartext abgespeichert werden, zum Beispiel: Pipeline configuration files, version control systems oder environment variables. Mann soll keine Passwörter hardcoden. Deswegen verwendet man Geheimnismanagement (secrets management). 
+
+Vorteile:
+- Verringerte Angriffsfläche
+- Verbesserte Compliance
+- Verbesserte Prüfbarkeit
+- Zentrale Kontrolle
+- Erhöhte Effizienz
 
 
-https://www.atlassian.com/continuous-delivery/principles/continuous-integration-vs-delivery-vs-deployment
-https://en.wikipedia.org/wiki/Continuous_deployment
-https://docs.aws.amazon.com/whitepapers/latest/overview-deployment-options/canary-deployments.html
-
-
+## Quellen:
+- https://www.atlassian.com/continuous-delivery/principles/continuous-integration-vs-delivery-vs-deployment
+- https://en.wikipedia.org/wiki/Continuous_deployment
+- https://docs.aws.amazon.com/whitepapers/latest/overview-deployment-options/canary-deployments.html
+- https://www.fullstory.com/blog/ab-testing/
+- https://dev.to/devcorner/feature-toggle-a-comprehensive-guide-1din
+- https://medium.com/@surajpatil141998/rollback-strategies-in-devops-ensuring-safer-deployments-a469243288ac
+- https://www.motadata.com/blog/continuous-monitoring
+- https://markilott.medium.com/password-storage-basics-2aa9e1586f98
+- https://entro.security/glossary/secrets-management-for-ci-cd-pipelines/
