@@ -31,7 +31,6 @@ class AirportControllerTest {
     @MockBean
     private AirportService service;
 
-    /** Prüft, dass ein gültiger Flughafen mit HTTP 201 erstellt wird. */
     @Test
     void createsAirportForValidRequest() throws Exception {
         Airport airport = airport("ZRH");
@@ -44,7 +43,6 @@ class AirportControllerTest {
                 .andExpect(jsonPath("$.code").value("ZRH"));
     }
 
-    /** Prüft, dass ein ungültiges Flughafenkürzel mit HTTP 400 abgelehnt wird. */
     @Test
     void rejectsInvalidAirportCode() throws Exception {
         mockMvc.perform(post("/api/airports")
@@ -53,7 +51,6 @@ class AirportControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    /** Prüft, dass ein bereits vorhandenes Kürzel mit HTTP 409 gemeldet wird. */
     @Test
     void rejectsDuplicateAirportCode() throws Exception {
         when(service.create(any())).thenThrow(new DuplicateAirportCodeException("ZRH"));
@@ -64,7 +61,6 @@ class AirportControllerTest {
                 .andExpect(status().isConflict());
     }
 
-    /** Prüft, dass vorhandene Flughäfen vollständig zurückgegeben werden. */
     @Test
     void returnsAllAirports() throws Exception {
         when(service.findAll()).thenReturn(List.of(airport("ZRH")));
@@ -74,7 +70,6 @@ class AirportControllerTest {
                 .andExpect(jsonPath("$[0].name").value("Zürich"));
     }
 
-    /** Prüft, dass eine leere Flughafenliste mit HTTP 404 gemeldet wird. */
     @Test
     void returnsNotFoundWhenNoAirportsExist() throws Exception {
         when(service.findAll()).thenThrow(new NoAirportsException());
