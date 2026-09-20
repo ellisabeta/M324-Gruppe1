@@ -114,3 +114,68 @@ mvn spring-boot:run
 
 Der Service läuft danach auf Port `8081`.
 
+## 7. Flughafen erstellen
+
+In einem zweiten Terminal ausführen:
+
+```bash
+curl -i -X POST http://localhost:8081/api/airports \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Flughafen Zürich",
+    "code": "ZRH",
+    "capacity": 30000
+  }'
+```
+
+Bei Erfolg kommt `201 Created`. Die ID und das Erstellungsdatum werden automatisch erzeugt.
+
+## 8. Alle Flughäfen abrufen
+
+```bash
+curl -i http://localhost:8081/api/airports
+```
+
+Mögliche Antworten:
+
+- `200 OK`: Flughäfen wurden gefunden
+- `404 Not Found`: Die Datenbank ist leer
+- `500 Internal Server Error`: MongoDB- oder Verbindungsproblem prüfen
+
+## 9. Unit Tests ausführen
+
+Die Unit Tests benötigen keine Atlas-Verbindung:
+
+```bash
+cd Code/P2/flughafen-service
+mvn test
+```
+
+## 10. Häufige Fehler
+
+### Java funktioniert nicht
+
+Prüfen, ob ein passendes JDK installiert ist und `JAVA_HOME` auf dieses JDK zeigt.
+
+### `500 Internal Server Error`
+
+- `.env` wurde nicht mit `source .env` geladen
+- die IP-Adresse ist in Atlas nicht freigegeben
+- Benutzername oder Passwort ist falsch
+- der Connection String enthält einen Fehler
+- Sonderzeichen im Passwort wurden nicht URL-codiert
+
+### `404 Not Found` beim Abrufen
+
+Wenn die Nachricht lautet, dass keine Flughäfen vorhanden sind, funktioniert die Verbindung. Die Datenbank ist einfach noch leer.
+
+## 11. Git-Prozess
+
+Nach der Arbeit:
+
+1. Änderungen testen
+2. Änderungen committen
+3. Feature-Branch pushen
+4. Pull Request auf `main` erstellen
+5. Code Review abwarten
+6. Erst nach erfolgreicher CI in `main` mergen
