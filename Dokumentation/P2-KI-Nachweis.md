@@ -32,3 +32,16 @@ Ich habe danach meine aktuelle IP-Adresse in Atlas freigegeben und die `.env` vo
 ```
 
 Das war richtig, weil die Datenbank noch leer war. Damit konnte ich die Verbindung zu Atlas selber bestätigen.
+
+## Unit-Tests
+
+Die KI schlug vor, bei jedem Endpoint einen normalen und einen fehlerhaften Fall zu testen. Ich habe das beim Flughafenservice umgesetzt.
+
+Getestet werden zum Beispiel:
+
+- Flughafen wird erfolgreich erstellt: `201 Created`
+- falsches Kürzel wird abgelehnt: `400 Bad Request`
+- doppeltes Kürzel wird abgelehnt: `409 Conflict`
+- Flughäfen werden abgerufen: `200 OK`
+
+Die Tests wurden mit `mvn test` ausgeführt und waren erfolgreich. Die JavaDoc-Kommentare bei den Tests habe ich behalten, weil sie für die P2-Aufgabe verlangt werden.
