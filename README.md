@@ -3,6 +3,8 @@
 ## Theorie
 - T1: [DevOps-Kultur](./Theorie/DevOps_Kultur.md)
 - T2: [DevOps-Prozesse](./Theorie/DevOps_Prozesse.md)
+- T3: [Continuous Integration](./Theorie/T3_CI.md)
+- T4: [Continuous Deployment](./Theorie/T4_Theorie_Continuous_Deployment.md)
 
 ## Andere Links
 - Zeitlogging: im Teams Channel
