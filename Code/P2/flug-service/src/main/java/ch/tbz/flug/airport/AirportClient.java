@@ -16,9 +16,10 @@ public class AirportClient {
     }
 
     public List<AirportSummary> findAll() {
-        return restClient.get()
+        List<AirportSummary> body = restClient.get()
                 .uri("/api/airports")
                 .retrieve()
                 .body(new ParameterizedTypeReference<>() {});
+        return body != null ? body : List.of();
     }
 }
