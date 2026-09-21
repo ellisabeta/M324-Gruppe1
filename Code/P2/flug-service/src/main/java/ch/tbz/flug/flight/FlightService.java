@@ -32,8 +32,8 @@ public class FlightService {
     }
 
     public Flight create(FlightCreateRequest request) {
-        String departureCode = request.departureAirportCode().toUpperCase(Locale.ROOT);
-        String arrivalCode = request.arrivalAirportCode().toUpperCase(Locale.ROOT);
+        String departureCode = request.departureAirportCode().trim().toUpperCase(Locale.ROOT);
+        String arrivalCode = request.arrivalAirportCode().trim().toUpperCase(Locale.ROOT);
 
         if (departureCode.equals(arrivalCode)) {
             throw new SameAirportException();
@@ -43,10 +43,16 @@ public class FlightService {
         }
 
         List<AirportSummary> airports = airportClient.findAll();
-        boolean departureExists = airports.stream()
-                .anyMatch(airport -> departureCode.equalsIgnoreCase(airport.code()));
-        boolean arrivalExists = airports.stream()
-                .anyMatch(airport -> arrivalCode.equalsIgnoreCase(airport.code()));
+        boolean departureExists = false;
+        boolean arrivalExists = false;
+        for (AirportSummary airport : airports) {
+            String airportCode = airport.code().trim();
+            departureExists |= departureCode.equalsIgnoreCase(airportCode);
+            arrivalExists |= arrivalCode.equalsIgnoreCase(airportCode);
+            if (departureExists && arrivalExists) {
+                break;
+            }
+        }
 
         if (!departureExists) {
             throw new UnknownAirportException(departureCode);
