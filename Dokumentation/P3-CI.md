@@ -1,7 +1,5 @@
 # P3 – Continuous Integration
 
-> Stellen mit ✏️ müssen nach den eigenen Pipeline-Läufen ausgefüllt bzw. selbst formuliert werden.
-
 ## 1. Technologie: GitHub Actions
 
 Unser Code liegt auf GitHub, deshalb verwenden wir GitHub Actions.
@@ -41,7 +39,7 @@ Regeln für `main` (Branch Protection):
 
 Warum kein paths-Filter beim `pull_request`? Ein „required“ Check, der wegen eines Filters nicht startet, blockiert den PR für immer. Beim `push` auf Feature-Branches spart der Filter dagegen unnötige Läufe (z. B. bei reinen Doku-Änderungen).
 
-Die Lehrperson muss Collaborator im Repository `ellisabeta/M324-Gruppe1` sein (✏️ prüfen). Dann kann sie im Tab „Actions“ jeden Workflow über „Run workflow“ starten.
+Die Lehrperson muss Collaborator im Repository `ellisabeta/M324-Gruppe1` sein. Dann kann sie im Tab „Actions“ jeden Workflow über „Run workflow“ starten.
 
 ## 3. Teststufen
 
@@ -74,23 +72,48 @@ cd Code/P2 && docker compose up -d --build && bash system-test/system-test.sh
 | Services | nacheinander | nacheinander im Job | parallel | getrennte Workflows | parallel |
 | Maven-Cache | nein | ja | ja | ja | ja |
 | Systemtest | ja | ja | ja | nein | ja |
-| Laufzeit Run 1 ✏️ | | | | | |
+| Laufzeit Run 1 | 150 s | 243 s | 140 s | 59 s / 65 s | 238 s |
+| Runner-Zeit Run 1 (Summe der Jobs) | 147 s | 229 s | 188 s | 55 s / 60 s | 302 s |
 | Laufzeit Run 2 ✏️ | | | | | |
 | Laufzeit Run 3 ✏️ | | | | | |
-| Link zum Run ✏️ | | | | | |
+| Link Run 1 | [Run](https://github.com/ellisabeta/M324-Gruppe1/actions/runs/36346484640) | [Run](https://github.com/ellisabeta/M324-Gruppe1/actions/runs/36346484745) | [Run](https://github.com/ellisabeta/M324-Gruppe1/actions/runs/36346484805) | [flughafen](https://github.com/ellisabeta/M324-Gruppe1/actions/runs/36346484818) / [flug](https://github.com/ellisabeta/M324-Gruppe1/actions/runs/36346485009) | [Run](https://github.com/ellisabeta/M324-Gruppe1/actions/runs/36346484964) |
+
+Bei D steht der erste Wert für den flughafen-service, der zweite für den flug-service.
 
 Messwert vor den Erweiterungen (nur flug-service, nur Unit Tests, ohne Cache): [Run 36343278338](https://github.com/ellisabeta/M324-Gruppe1/actions/runs/36343278338) – Job 36 s, davon Maven 24 s, 4 Tests grün.
 
-Gemessen wird die Gesamtdauer des Runs („Total duration“ im Actions-Tab). Run 1 ist ein „kalter“ Lauf ohne Cache, ab Run 2 greift der Maven-Cache.
+Gemessen wird die Gesamtdauer des Runs vom Start bis zum Ende. Die Runner-Zeit ist die Summe aller Jobs, also die Rechenzeit, die GitHub tatsächlich verbraucht.
 
-### Beobachtungen pro Variante ✏️
+### Run 1 im Detail (Commit `cb52f30`, 27.09.2026, alle grün)
+
+| Variante | Jobs (Dauer) |
+|---|---|
+| A | Build & Test (alles in einem Job) 147 s |
+| B | Build 40 s → Unit Tests 26 s → Integrationstests 59 s → Systemtest 104 s |
+| C | Verify flughafen-service 55 s ∥ Verify flug-service 62 s → Systemtest 71 s |
+| D | flughafen-service 55 s ∥ flug-service 60 s (getrennte Workflows) |
+| Final | Build 49 s ∥ 25 s → Unit Tests 15 s ∥ 18 s → Integrationstests 50 s ∥ 37 s → Systemtest 108 s |
+
+(∥ = parallel, Werte in der Reihenfolge flughafen-service / flug-service)
+
+Testergebnisse in Run 1 (aus dem Log von `ci.yml`):
+
+- Unit Tests: 5 (flughafen-service) + 4 (flug-service), alle bestanden
+- Integrationstests: 3 + 3, alle bestanden; Testcontainers startet `mongo:7.0` in 1,5–3,5 s
+- Systemtest: 11 von 11 Prüfungen OK
+- Maven-Cache: vom ersten Job gespeichert (~75 MB), von den späteren Jobs geladen („Cache restored successfully“)
+- Artefakte: `flughafen-service-cb52f30…` und `flug-service-cb52f30…` mit den JARs sowie die Testreports
+
+Hinweis: Alle Workflows sind in Run 1 gleichzeitig gestartet. Der Maven-Cache war zu Beginn noch leer und wurde erst während des Runs gespeichert. Run 1 ist darum teilweise ein „kalter“ Lauf; ab Run 2 ist der Cache von Anfang an vorhanden.
+
+### Beobachtungen pro Variante
 
 - **A:** Einfach zu lesen. Schlägt ein Schritt fehl, werden die folgenden nicht mehr ausgeführt. Im Log muss man suchen, welche Stufe fehlgeschlagen ist.
 - **B:** Im Actions-Tab sieht man sofort, welche Stufe rot ist. Jeder Job startet einen neuen Runner, dadurch mehr Overhead (Checkout, Java, Cache laden).
 - **C:** Beide Services laufen gleichzeitig, `fail-fast: false` zeigt Fehler von beiden Services. Die Stufen sind aber wieder in einem `mvn verify` zusammengefasst.
 - **D:** Nur der geänderte Service wird gebaut. Kein Systemtest möglich, weil kein Workflow beide Services kennt. Die Logik ist dank Reusable Workflow nicht doppelt.
 
-### Fehlerfall ✏️
+### Fehlerfall
 
 Einen Test absichtlich fehlschlagen lassen (z. B. erwarteten Status in `AirportControllerTest` ändern), pushen und festhalten:
 
@@ -98,7 +121,7 @@ Einen Test absichtlich fehlschlagen lassen (z. B. erwarteten Status in `AirportC
 - Wo im Log steht der Fehler? (Log-Auszug einfügen)
 - Sind die Testreports trotzdem als Artefakt vorhanden?
 
-## 5. Finale Variante ✏️
+## 5. Finale Variante
 
 `ci.yml` kombiniert B und C: Jede Teststufe ist ein eigener Job, und jeder Job läuft per Matrix parallel für beide Services.
 
