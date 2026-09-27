@@ -1,5 +1,5 @@
 # P3 – CI Variante A: "Monolith"
-# Ein Workflow, ein Job, alle Schritte nacheinander.
+# Ein Workflow, ein Job, alle Schritte nacheinander (beide Services + Systemtest).
 # Bewusst ohne Maven-Cache, damit diese Variante als Baseline für den
 # Laufzeitvergleich mit den anderen Varianten dient.
 
@@ -7,52 +7,74 @@ name: CI Variante A (Monolith)
 
 on:
   push:
-    branches: [ "feature/**" ]
+    branches: [ "feature/P3-**" ]
     paths:
-      - "Code/P2/flug-service/**"
+      - "Code/P2/**"
       - ".github/workflows/ci-variant-a.yml"
-  pull_request:
-    branches: [ main ]
   workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-variant-a-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build-and-test:
-    name: Build & Test flug-service
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
+    name: Build & Test (alles in einem Job)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
 
     defaults:
       run:
-        working-directory: Code/P2/flug-service
+        working-directory: Code/P2
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Java 17 einrichten
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: "17"
 
       # verify = compile -> test (Surefire, *Test) -> package -> integration-test (Failsafe, *IT)
-      - name: Build, Unit- und Integrationstests
-        run: mvn -B -ntp verify
+      - name: flughafen-service bauen und testen
+        run: mvn -B -ntp -f flughafen-service/pom.xml verify
+
+      - name: flug-service bauen und testen
+        run: mvn -B -ntp -f flug-service/pom.xml verify
+
+      - name: Services starten
+        run: docker compose up -d --build
+
+      - name: Systemtest ausführen
+        run: bash system-test/system-test.sh
+
+      - name: Container-Logs bei Fehler
+        if: failure()
+        run: docker compose logs
+
+      - name: Services stoppen
+        if: always()
+        run: docker compose down -v
 
       - name: Testreports hochladen
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
-          name: test-reports-flug-service
+          name: test-reports-variant-a
           path: |
-            Code/P2/flug-service/target/surefire-reports/
-            Code/P2/flug-service/target/failsafe-reports/
+            Code/P2/*/target/surefire-reports/
+            Code/P2/*/target/failsafe-reports/
           if-no-files-found: ignore
 
       # Build-Ergebnis für P3b (Publish-Schritt)
-      - name: JAR hochladen
-        uses: actions/upload-artifact@v4
+      - name: JARs hochladen
+        uses: actions/upload-artifact@v7
         with:
-          name: flug-service-${{ github.sha }}
-          path: Code/P2/flug-service/target/flug-service-*.jar
+          name: jars-variant-a-${{ github.sha }}
+          path: Code/P2/*/target/*.jar
           if-no-files-found: error

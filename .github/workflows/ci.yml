@@ -1,0 +1,127 @@
+# P3 – Finale CI-Pipeline
+# Kombination aus Variante B (Teststufen als eigene Jobs) und Variante C (Matrix pro Service):
+#   build ─> unit-test ─> integration-test ─> system-test
+#   (jede Stufe läuft parallel für flughafen-service und flug-service)
+# Der build-Job erzeugt pro Service ein JAR-Artefakt, an das P3b den Publish-Schritt anhängt.
+
+name: CI
+
+on:
+  push:
+    branches: [ "feature/**" ]
+    paths:
+      - "Code/P2/**"
+      - ".github/workflows/ci.yml"
+      - ".github/workflows/_system-test.yml"
+  # Kein paths-Filter: der Check ist auf main als "required" gesetzt und muss bei jedem PR laufen.
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build ${{ matrix.service }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        service: [ flughafen-service, flug-service ]
+    defaults:
+      run:
+        working-directory: Code/P2/${{ matrix.service }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+          cache-dependency-path: Code/P2/*/pom.xml
+
+      # package ohne Tests: kompiliert Code + Tests und erzeugt das JAR
+      - name: JAR bauen
+        run: mvn -B -ntp package -DskipUnitTests
+
+      - name: JAR hochladen
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.service }}-${{ github.sha }}
+          path: Code/P2/${{ matrix.service }}/target/*.jar
+          if-no-files-found: error
+          retention-days: 14
+
+  unit-test:
+    name: Unit Tests ${{ matrix.service }}
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        service: [ flughafen-service, flug-service ]
+    defaults:
+      run:
+        working-directory: Code/P2/${{ matrix.service }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+          cache-dependency-path: Code/P2/*/pom.xml
+
+      - name: Unit Tests (Surefire)
+        run: mvn -B -ntp test
+
+      - name: Testreports hochladen
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: unit-test-reports-${{ matrix.service }}
+          path: Code/P2/${{ matrix.service }}/target/surefire-reports/
+          if-no-files-found: ignore
+
+  integration-test:
+    name: Integrationstests ${{ matrix.service }}
+    needs: unit-test
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        service: [ flughafen-service, flug-service ]
+    defaults:
+      run:
+        working-directory: Code/P2/${{ matrix.service }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+          cache-dependency-path: Code/P2/*/pom.xml
+
+      - name: Integrationstests (Failsafe + Testcontainers MongoDB)
+        run: mvn -B -ntp verify -DskipUnitTests
+
+      - name: Testreports hochladen
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: integration-test-reports-${{ matrix.service }}
+          path: Code/P2/${{ matrix.service }}/target/failsafe-reports/
+          if-no-files-found: ignore
+
+  system-test:
+    name: Systemtest
+    needs: integration-test
+    uses: ./.github/workflows/_system-test.yml

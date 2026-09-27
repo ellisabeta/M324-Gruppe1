@@ -1,0 +1,120 @@
+# P3 – CI Variante B: "Stages als Jobs"
+# Jede Teststufe ist ein eigener Job (build -> unit -> integration -> system).
+# Beide Services werden innerhalb eines Jobs nacheinander abgearbeitet.
+# Mit Maven-Cache.
+
+name: CI Variante B (Stages)
+
+on:
+  push:
+    branches: [ "feature/P3-**" ]
+    paths:
+      - "Code/P2/**"
+      - ".github/workflows/ci-variant-b.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-variant-b-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  MVN: mvn -B -ntp
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: Code/P2
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+          cache-dependency-path: Code/P2/*/pom.xml
+
+      # package ohne Tests: kompiliert Code + Tests und erzeugt die JARs
+      - name: JARs bauen
+        run: |
+          for service in flughafen-service flug-service; do
+            $MVN -f $service/pom.xml package -DskipUnitTests
+          done
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: flughafen-service-${{ github.sha }}
+          path: Code/P2/flughafen-service/target/*.jar
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7
+        with:
+          name: flug-service-${{ github.sha }}
+          path: Code/P2/flug-service/target/*.jar
+          if-no-files-found: error
+
+  unit-test:
+    name: Unit Tests
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: Code/P2
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+          cache-dependency-path: Code/P2/*/pom.xml
+      - name: Unit Tests (Surefire)
+        run: |
+          for service in flughafen-service flug-service; do
+            $MVN -f $service/pom.xml test
+          done
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: unit-test-reports-variant-b
+          path: Code/P2/*/target/surefire-reports/
+          if-no-files-found: ignore
+
+  integration-test:
+    name: Integrationstests
+    needs: unit-test
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: Code/P2
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+          cache-dependency-path: Code/P2/*/pom.xml
+      - name: Integrationstests (Failsafe + Testcontainers MongoDB)
+        run: |
+          for service in flughafen-service flug-service; do
+            $MVN -f $service/pom.xml verify -DskipUnitTests
+          done
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: integration-test-reports-variant-b
+          path: Code/P2/*/target/failsafe-reports/
+          if-no-files-found: ignore
+
+  system-test:
+    name: Systemtest
+    needs: integration-test
+    uses: ./.github/workflows/_system-test.yml

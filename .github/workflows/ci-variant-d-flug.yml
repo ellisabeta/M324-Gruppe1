@@ -1,0 +1,27 @@
+# P3 – CI Variante D: "Ein Workflow pro Service"
+# Läuft nur, wenn sich der flug-service ändert (paths-Filter).
+# Die Logik liegt im wiederverwendbaren Workflow _maven-service.yml.
+
+name: CI Variante D (flug-service)
+
+on:
+  push:
+    branches: [ "feature/P3-**" ]
+    paths:
+      - "Code/P2/flug-service/**"
+      - ".github/workflows/ci-variant-d-flug.yml"
+      - ".github/workflows/_maven-service.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-variant-d-flug-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  flug-service:
+    uses: ./.github/workflows/_maven-service.yml
+    with:
+      service: flug-service

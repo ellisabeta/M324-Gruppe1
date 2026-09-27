@@ -1,0 +1,27 @@
+# P3 – CI Variante D: "Ein Workflow pro Service"
+# Läuft nur, wenn sich der flughafen-service ändert (paths-Filter).
+# Die Logik liegt im wiederverwendbaren Workflow _maven-service.yml.
+
+name: CI Variante D (flughafen-service)
+
+on:
+  push:
+    branches: [ "feature/P3-**" ]
+    paths:
+      - "Code/P2/flughafen-service/**"
+      - ".github/workflows/ci-variant-d-flughafen.yml"
+      - ".github/workflows/_maven-service.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-variant-d-flughafen-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  flughafen-service:
+    uses: ./.github/workflows/_maven-service.yml
+    with:
+      service: flughafen-service

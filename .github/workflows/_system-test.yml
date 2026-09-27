@@ -1,0 +1,48 @@
+# Wiederverwendbarer Systemtest (workflow_call).
+# Lädt die JARs aus dem aufrufenden Run, startet beide Services mit MongoDB
+# per docker compose und prüft das Zusammenspiel über echte HTTP-Aufrufe.
+
+name: Systemtest (reusable)
+
+on:
+  workflow_call:
+
+jobs:
+  system-test:
+    name: Systemtest (docker compose)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+
+    defaults:
+      run:
+        working-directory: Code/P2
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: JAR flughafen-service laden
+        uses: actions/download-artifact@v8
+        with:
+          name: flughafen-service-${{ github.sha }}
+          path: Code/P2/flughafen-service/target
+
+      - name: JAR flug-service laden
+        uses: actions/download-artifact@v8
+        with:
+          name: flug-service-${{ github.sha }}
+          path: Code/P2/flug-service/target
+
+      - name: Services starten
+        run: docker compose up -d --build
+
+      - name: Systemtest ausführen
+        run: bash system-test/system-test.sh
+
+      - name: Container-Logs bei Fehler
+        if: failure()
+        run: docker compose logs
+
+      - name: Services stoppen
+        if: always()
+        run: docker compose down -v
