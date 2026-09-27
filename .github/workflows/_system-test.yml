@@ -1,7 +1,3 @@
-# Wiederverwendbarer Systemtest (workflow_call).
-# Lädt die JARs aus dem aufrufenden Run, startet beide Services mit MongoDB
-# per docker compose und prüft das Zusammenspiel über echte HTTP-Aufrufe.
-
 name: Systemtest (reusable)
 
 on:

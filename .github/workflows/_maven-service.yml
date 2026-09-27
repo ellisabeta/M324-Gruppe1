@@ -1,6 +1,3 @@
-# Wiederverwendbarer Build + Test für einen einzelnen Maven-Service (workflow_call).
-# Wird von Variante D (ein Workflow pro Service) aufgerufen.
-
 name: Maven-Service (reusable)
 
 on:
