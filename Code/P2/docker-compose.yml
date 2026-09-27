@@ -1,0 +1,27 @@
+# Startet beide Services mit einer lokalen MongoDB für den Systemtest.
+# Voraussetzung: beide JARs wurden vorher mit "mvn package" gebaut.
+services:
+  mongo:
+    image: mongo:7.0
+    ports:
+      - "27017:27017"
+
+  flughafen-service:
+    build: ./flughafen-service
+    environment:
+      MONGODB_AIRPORT_URI: mongodb://mongo:27017/flughafen_db
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mongo
+
+  flug-service:
+    build: ./flug-service
+    environment:
+      MONGODB_FLIGHT_URI: mongodb://mongo:27017/flug_db
+      AIRPORT_SERVICE_URL: http://flughafen-service:8081
+    ports:
+      - "8082:8082"
+    depends_on:
+      - mongo
+      - flughafen-service

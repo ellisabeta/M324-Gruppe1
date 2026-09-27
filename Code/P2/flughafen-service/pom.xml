@@ -19,6 +19,10 @@
 
     <properties>
         <java.version>17</java.version>
+        <!-- 1.21.4 statt der von Spring Boot 3.3 verwalteten 1.19.x: nötig für Docker Engine 29 auf den GitHub-Runnern -->
+        <testcontainers.version>1.21.4</testcontainers.version>
+        <!-- mvn verify -DskipUnitTests führt nur die Integrationstests (*IT) aus -->
+        <skipUnitTests>false</skipUnitTests>
     </properties>
 
     <dependencies>
@@ -39,6 +43,21 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-testcontainers</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mongodb</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -46,6 +65,13 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skipTests>${skipUnitTests}</skipTests>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
