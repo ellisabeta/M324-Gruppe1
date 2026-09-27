@@ -10,6 +10,8 @@
 - Lernjournal Gabriel: [link](https://github.com/GabrielArocha7/Lernjournal_M324_GabrielArocha)
 
 ## Dokumentation
+- P3: [Continuous Integration](./Dokumentation/P3-CI.md)
+
 Gehen Sie vor wie in diesem Dokument beschrieben.
 
 ## Code
