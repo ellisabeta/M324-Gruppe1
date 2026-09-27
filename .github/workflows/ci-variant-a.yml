@@ -1,0 +1,58 @@
+# P3 – CI Variante A: "Monolith"
+# Ein Workflow, ein Job, alle Schritte nacheinander.
+# Bewusst ohne Maven-Cache, damit diese Variante als Baseline für den
+# Laufzeitvergleich mit den anderen Varianten dient.
+
+name: CI Variante A (Monolith)
+
+on:
+  push:
+    branches: [ "feature/**" ]
+    paths:
+      - "Code/P2/flug-service/**"
+      - ".github/workflows/ci-variant-a.yml"
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    name: Build & Test flug-service
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    defaults:
+      run:
+        working-directory: Code/P2/flug-service
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Java 17 einrichten
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      # verify = compile -> test (Surefire, *Test) -> package -> integration-test (Failsafe, *IT)
+      - name: Build, Unit- und Integrationstests
+        run: mvn -B -ntp verify
+
+      - name: Testreports hochladen
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports-flug-service
+          path: |
+            Code/P2/flug-service/target/surefire-reports/
+            Code/P2/flug-service/target/failsafe-reports/
+          if-no-files-found: ignore
+
+      # Build-Ergebnis für P3b (Publish-Schritt)
+      - name: JAR hochladen
+        uses: actions/upload-artifact@v4
+        with:
+          name: flug-service-${{ github.sha }}
+          path: Code/P2/flug-service/target/flug-service-*.jar
+          if-no-files-found: error
