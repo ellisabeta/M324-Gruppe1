@@ -32,3 +32,18 @@ Ich habe danach meine aktuelle IP-Adresse in Atlas freigegeben und die `.env` vo
 ```
 
 Das war richtig, weil die Datenbank noch leer war. Damit konnte ich die Verbindung zu Atlas selber bestätigen.
+
+## Flugservice
+
+Für den Flugservice habe ich KI für Ideen zur Aufteilung, Validierung und für Testfälle verwendet.
+
+Übernommen und angepasst habe ich:
+
+- Prüfung von Start- und Landezeit
+- Prüfung, dass Start- und Zielflughafen verschieden sind
+- Prüfung des Flugzeugtyps
+- Aufruf des Flughafenservices über einen eigenen Client
+
+Ich habe die Vorschläge an mein Projekt angepasst und mit den Unit-Tests geprüft. Dabei wurden erfolgreiche und fehlerhafte Eingaben getestet. Die Tests liefen mit `mvn test` erfolgreich durch.
+
+Die endgültige Entscheidung, welche Vorschläge verwendet werden, habe ich selber getroffen. Passwörter und die `.env` wurden nicht in den Code oder in Git übernommen.
