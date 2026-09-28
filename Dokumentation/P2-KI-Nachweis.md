@@ -45,6 +45,7 @@ Getestet werden zum Beispiel:
 - Flughäfen werden abgerufen: `200 OK`
 
 Die Tests wurden mit `mvn test` ausgeführt und waren erfolgreich. Die JavaDoc-Kommentare bei den Tests habe ich behalten, weil sie für die P2-Aufgabe verlangt werden.
+
 ## Flugservice
 
 Für den Flugservice habe ich KI für Ideen zur Aufteilung, Validierung und für Testfälle verwendet.
@@ -59,3 +60,9 @@ Für den Flugservice habe ich KI für Ideen zur Aufteilung, Validierung und für
 Ich habe die Vorschläge an mein Projekt angepasst und mit den Unit-Tests geprüft. Dabei wurden erfolgreiche und fehlerhafte Eingaben getestet. Die Tests liefen mit `mvn test` erfolgreich durch.
 
 Die endgültige Entscheidung, welche Vorschläge verwendet werden, habe ich selber getroffen. Passwörter und die `.env` wurden nicht in den Code oder in Git übernommen.
+
+## Integration und CI
+
+Für Schritt 4 habe ich KI für Vorschläge zum Integrationstest und zur GitHub-Actions-Datei verwendet. Ich habe die Lösung angepasst, damit der Test ohne MongoDB und ohne Passwörter läuft.
+
+Geprüft habe ich die Lösung mit beiden Maven-Testbefehlen. Dabei liefen die Unit-Tests und die zwei Integrationstests erfolgreich durch. Die CI-Datei führt dieselben Tests bei Pull Requests aus.
