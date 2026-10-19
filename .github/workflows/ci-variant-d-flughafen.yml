@@ -1,0 +1,17 @@
+name: CI Variante D (flughafen-service)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-variant-d-flughafen-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  flughafen-service:
+    uses: ./.github/workflows/_maven-service.yml
+    with:
+      service: flughafen-service
