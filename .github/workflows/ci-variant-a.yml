@@ -1,0 +1,68 @@
+name: CI Variante A (Monolith)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-variant-a-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Build & Test (alles in einem Job)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    defaults:
+      run:
+        working-directory: Code/P2
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Java 17 einrichten
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: flughafen-service bauen und testen
+        run: mvn -B -ntp -f flughafen-service/pom.xml verify
+
+      - name: flug-service bauen und testen
+        run: mvn -B -ntp -f flug-service/pom.xml verify
+
+      - name: Services starten
+        run: docker compose up -d --build
+
+      - name: Systemtest ausführen
+        run: bash system-test/system-test.sh
+
+      - name: Container-Logs bei Fehler
+        if: failure()
+        run: docker compose logs
+
+      - name: Services stoppen
+        if: always()
+        run: docker compose down -v
+
+      - name: Testreports hochladen
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-reports-variant-a
+          path: |
+            Code/P2/*/target/surefire-reports/
+            Code/P2/*/target/failsafe-reports/
+          if-no-files-found: ignore
+
+      - name: JARs hochladen
+        uses: actions/upload-artifact@v7
+        with:
+          name: jars-variant-a-${{ github.sha }}
+          path: Code/P2/*/target/*.jar
+          if-no-files-found: error
