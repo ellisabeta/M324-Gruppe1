@@ -100,7 +100,20 @@ Testergebnis im finalen Workflow (Run 1): 5 + 4 Unit Tests, 3 + 3 Integrationste
 
 Auf dem Branch `feature/P3-fehlerfall` erwartet ein Test in `AirportControllerTest` absichtlich `200` statt `409`.
 
-*(Ergebnis folgt nach dem Lauf)*
+Ergebnis ([Run](https://github.com/ellisabeta/M324-Gruppe1/actions/runs/39165213743)):
+
+- Build: beide grün
+- Unit Tests flughafen-service: rot
+- Unit Tests flug-service: grün, läuft wegen `fail-fast: false` trotzdem fertig
+- Integrationstests und Systemtest: übersprungen
+
+Im Log steht direkt, welcher Test in welcher Zeile fehlschlägt:
+
+```text
+AirportControllerTest.rejectsDuplicateAirportCode:64 Status expected:<200> but was:<409>
+```
+
+Der Testreport wurde trotzdem als Artefakt hochgeladen. Die Pipeline verhält sich also so, wie wir wollen: Ein Fehler stoppt die späteren Stufen, und man findet ihn schnell. Der Branch wird nicht gemergt.
 
 ## 5. Finale Variante
 
