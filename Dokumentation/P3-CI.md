@@ -43,11 +43,11 @@ Damit die Lehrperson die Pipelines selbst starten kann, muss sie Collaborator im
 | Stufe | Was wird geprüft | Dateien | Wo in `ci.yml` |
 |---|---|---|---|
 | Unit | Controller einzeln, Service gemockt | `AirportControllerTest`, `FlightControllerTest` | Job `unit-test` (`mvn test`) |
-| Unit mit HTTP-Mock | Flugservice ruft den Flughafenservice auf, die Antwort wird simuliert | `FlightServiceIntegrationTest` (aus P2) | Job `unit-test` |
+| Service-Kommunikation | Flugservice ruft den Flughafenservice auf, die Antwort wird simuliert | `FlightServiceIntegrationTest` (aus P2) | Job `unit-test` |
 | Integration | ganzer Service mit echter MongoDB im Container (Testcontainers) | `AirportApiIT`, `FlightApiIT` | Job `integration-test` (`mvn verify -DskipUnitTests`) |
 | System | beide Services und MongoDB mit docker compose, echte HTTP-Aufrufe | `Code/P2/system-test/system-test.sh` | Job `system-test` |
 
-Maven trennt die Stufen über den Namen: `*Test` läuft mit Surefire (`mvn test`), `*IT` mit Failsafe (`mvn verify`). `FlightServiceIntegrationTest` braucht keine Datenbank und läuft deshalb bei den Unit Tests mit.
+Maven trennt die Stufen über den Namen: `*Test` läuft mit Surefire (`mvn test`), `*IT` mit Failsafe (`mvn verify`). `FlightServiceIntegrationTest` braucht keine Datenbank und läuft deshalb bei den Unit Tests mit. In P2 haben wir ihn Integrationstest genannt, weil er Flugservice und `AirportClient` zusammen prüft. In P3 zählen wir nur Tests mit echter Datenbank als Integrationstests.
 
 Integrationstests:
 
