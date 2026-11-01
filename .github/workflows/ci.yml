@@ -1,4 +1,4 @@
-name: CI
+name: CI / CD
 
 on:
   push:
@@ -178,3 +178,131 @@ jobs:
             echo ""
             echo "${{ steps.meta.outputs.tags }}" | sed 's/^/- /'
           } | tee -a "$GITHUB_STEP_SUMMARY"
+
+  delivery:
+    name: Release erstellen (Delivery)
+    needs: publish
+    # Delivery: Automatische Release-Erstellung bei Release-Tags (z. B. v1.0.0)
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: JAR flughafen-service laden
+        uses: actions/download-artifact@v8
+        with:
+          name: flughafen-service-${{ github.sha }}
+          path: release-assets/
+
+      - name: JAR flug-service laden
+        uses: actions/download-artifact@v8
+        with:
+          name: flug-service-${{ github.sha }}
+          path: release-assets/
+
+      - name: GitHub Release erstellen
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${GITHUB_REF_NAME}"
+          CLEAN_TAG="${GITHUB_REF_NAME#v}"
+          gh release create "$VERSION" \
+            release-assets/*.jar \
+            --title "Release $VERSION" \
+            --generate-notes \
+            --notes "### Release $VERSION
+
+          Automatisches Continuous Delivery Release aus der CI/CD-Pipeline.
+
+          #### Docker-Images (GHCR)
+          - \`ghcr.io/${{ github.repository_owner }}/m324-flughafen-service:$CLEAN_TAG\`
+          - \`ghcr.io/${{ github.repository_owner }}/m324-flug-service:$CLEAN_TAG\`
+
+          #### Build-Artefakte
+          - Getestete JAR-Dateien sind als Assets an dieses Release angehaengt."
+
+  deploy:
+    name: Docker Deployment
+    needs: publish
+    # Continuous Deployment: Deployt bei Push auf main, bei Release-Tags (v*) oder manuellem Start
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Deployment-Tag ermitteln
+        id: tag
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            # SemVer-Tag ohne fuehrendes 'v' (z. B. 1.0.0)
+            VERSION="${GITHUB_REF_NAME#v}"
+          elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            VERSION="main"
+          else
+            VERSION="sha-${GITHUB_SHA::7}"
+          fi
+          echo "image_tag=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Deployment-Tag: $VERSION"
+
+      - name: Bei GHCR anmelden
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Versionierte Images aus GHCR ziehen
+        env:
+          IMAGE_OWNER: ${{ github.repository_owner }}
+          IMAGE_TAG: ${{ steps.tag.outputs.image_tag }}
+        run: |
+          docker compose -f Code/P2/docker-compose.deploy.yml pull
+
+      - name: Container via Docker Compose starten
+        env:
+          IMAGE_OWNER: ${{ github.repository_owner }}
+          IMAGE_TAG: ${{ steps.tag.outputs.image_tag }}
+        run: |
+          docker compose -f Code/P2/docker-compose.deploy.yml up -d
+
+      - name: Smoke Test nach Deployment ausfuehren
+        run: |
+          bash Code/P2/deployment/smoke-test.sh
+
+      - name: Deployment-Nachweis erfassen
+        run: |
+          {
+            echo "## Deployment Nachweis"
+            echo "**Zielumgebung:** Docker Host (Ubuntu Runner / Target Server)"
+            echo "**Verwendeter Image-Tag:** \`${{ steps.tag.outputs.image_tag }}\`"
+            echo "**Git Commit:** \`${{ github.sha }}\`"
+            echo ""
+            echo "### Laufende Container & Versionierte Artefakte:"
+            echo "\`\`\`text"
+            docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}"
+            echo "\`\`\`"
+            echo ""
+            echo "### Exakte Image-IDs (Digests):"
+            echo "\`\`\`text"
+            docker inspect --format '{{.Name}}: {{.Config.Image}} -> {{.Image}}' m324-flughafen-service m324-flug-service
+            echo "\`\`\`"
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Container-Logs bei Fehler
+        if: failure()
+        run: |
+          docker compose -f Code/P2/docker-compose.deploy.yml logs
+
+      - name: Services stoppen (Runner-Cleanup)
+        if: always()
+        run: |
+          docker compose -f Code/P2/docker-compose.deploy.yml down -v
