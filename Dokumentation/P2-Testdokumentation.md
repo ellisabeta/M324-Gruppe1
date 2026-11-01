@@ -22,6 +22,8 @@ Dabei wird die API-Anfrage an `/api/airports` simuliert. Es wird geprüft, dass:
 
 Der Test verwendet keine echte Datenbank und keine echten Zugangsdaten. Er kann deshalb lokal und in GitHub Actions ausgeführt werden.
 
+In P3 haben wir die Teststufen genauer getrennt: Als Integrationstest zählt dort nur ein Test mit echter Datenbank (`AirportApiIT`, `FlightApiIT`). Weil `FlightServiceIntegrationTest` keine Datenbank braucht, läuft er in der CI zusammen mit den Unit Tests (`mvn test`). Siehe [P3-CI.md](P3-CI.md), Kapitel 3.
+
 ## CI
 
 Die Datei `.github/workflows/ci.yml` führt die Tests beider Services bei Pushes und Pull Requests gegen `main` aus (bis P3: `p2-ci.yml`, siehe `P3-CI.md`). Die Testresultate sind danach im GitHub-Actions-Lauf sichtbar.

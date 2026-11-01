@@ -52,7 +52,7 @@ Die Version in der `pom.xml` (`0.0.1-SNAPSHOT`) haben wir nicht angepasst. Massg
 
 GHCR muss nicht separat eingerichtet werden. Beim ersten Publish legt GitHub die Packages automatisch an. Über das Label `org.opencontainers.image.source` werden sie mit unserem Repository verknüpft und erscheinen dort rechts unter „Packages“.
 
-Neue Packages sind zuerst privat. Damit die Lehrperson die Images ohne Login ziehen kann, stellt die Owner-Person (`ellisabeta`) sie auf öffentlich: Package öffnen → „Package settings“ → „Change visibility“ → „Public“.
+Unsere beiden Packages sind öffentlich. Die Images können also ohne Login gezogen werden, auch von der Lehrperson. Die Sichtbarkeit kann nur die Owner-Person (`ellisabeta`) ändern: Package öffnen → „Package settings“ → „Change visibility“.
 
 ## 4. Erweiterung der CI-Pipeline
 
@@ -78,7 +78,29 @@ build → unit-test → integration-test → system-test → publish
 
 ## 6. Nachweis
 
-*(folgt nach dem ersten Publish: Link zum Run, publizierte Tags, Screenshot der Package-Seite und `docker pull`)*
+Erster Publish nach dem Merge auf `main` ([Run](https://github.com/ellisabeta/M324-Gruppe1/actions/runs/39213406303), Commit `1d11ac3`, 19.10.2026). Alle Jobs waren grün, danach liefen beide Publish-Jobs.
+
+| Image | Tags | Digest |
+|---|---|---|
+| `ghcr.io/ellisabeta/m324-flughafen-service` | `main`, `sha-1d11ac3` | `sha256:db5a8c57f45a…` |
+| `ghcr.io/ellisabeta/m324-flug-service` | `main`, `sha-1d11ac3` | `sha256:15e5fdf31079…` |
+
+Auszug aus dem Log des Publish-Jobs:
+
+```text
+pushing manifest for ghcr.io/ellisabeta/m324-flughafen-service:main@sha256:db5a8c57f45a...
+pushing manifest for ghcr.io/ellisabeta/m324-flughafen-service:sha-1d11ac3@sha256:db5a8c57f45a...
+```
+
+Package-Seiten: [m324-flughafen-service](https://github.com/ellisabeta/M324-Gruppe1/pkgs/container/m324-flughafen-service), [m324-flug-service](https://github.com/ellisabeta/M324-Gruppe1/pkgs/container/m324-flug-service)
+
+Herunterladen ohne Login:
+
+```bash
+docker pull ghcr.io/ellisabeta/m324-flug-service:sha-1d11ac3
+```
+
+Release `v1.0.0` mit den Tags `1.0.0`, `1.0` und `latest`: *(folgt, sobald der Git-Tag gesetzt ist)*
 
 ## 7. Verwendung in P4
 
@@ -131,6 +153,10 @@ needs: system-test
 if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
 ```
 
-**Resultat:** *(folgt nach dem ersten Lauf auf einem Feature-Branch und auf `main`)*
+**Resultat:**
 
-**Schlussfolgerung:** *(folgt mit dem Resultat)*
+- Auf dem Feature-Branch wurde `publish` übersprungen, beim Push ([Run](https://github.com/ellisabeta/M324-Gruppe1/actions/runs/39165213412)) und beim Pull Request ([Run](https://github.com/ellisabeta/M324-Gruppe1/actions/runs/39213070015)).
+- Beim Fehlerfall ([Run](https://github.com/ellisabeta/M324-Gruppe1/actions/runs/39165213743)) lief nach den roten Unit Tests kein weiterer Job.
+- Auf `main` ([Run](https://github.com/ellisabeta/M324-Gruppe1/actions/runs/39213406303)) lief `publish` erst nach dem grünen Systemtest und hat beide Images mit `main` und `sha-1d11ac3` publiziert.
+
+**Schlussfolgerung:** Die Bedingung funktioniert: In der Registry landen nur Images von geprüftem Code auf `main` oder von Releases. Über den `sha-`-Tag finden wir zu jedem Image den passenden Commit. Ein eigenes Token mussten wir nicht anlegen.

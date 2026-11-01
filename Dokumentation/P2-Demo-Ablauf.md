@@ -171,7 +171,7 @@ Getestet wird:
 - Flug mit vorhandenen Flughäfen wird erstellt.
 - Flug mit unbekanntem Flughafen wird abgelehnt.
 
-Der Test benötigt keine echte Datenbank und keine Passwörter.
+Der Test benötigt keine echte Datenbank und keine Passwörter. In der CI läuft er deshalb bei den Unit Tests mit. Die Integrationstests mit echter Datenbank kamen in P3 dazu (siehe `P3-CI.md`).
 
 ## 8. CI-Pipeline
 

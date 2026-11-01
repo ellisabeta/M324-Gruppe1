@@ -43,11 +43,11 @@ Damit die Lehrperson die Pipelines selbst starten kann, muss sie Collaborator im
 | Stufe | Was wird geprüft | Dateien | Wo in `ci.yml` |
 |---|---|---|---|
 | Unit | Controller einzeln, Service gemockt | `AirportControllerTest`, `FlightControllerTest` | Job `unit-test` (`mvn test`) |
-| Unit mit HTTP-Mock | Flugservice ruft den Flughafenservice auf, die Antwort wird simuliert | `FlightServiceIntegrationTest` (aus P2) | Job `unit-test` |
+| Service-Kommunikation | Flugservice ruft den Flughafenservice auf, die Antwort wird simuliert | `FlightServiceIntegrationTest` (aus P2) | Job `unit-test` |
 | Integration | ganzer Service mit echter MongoDB im Container (Testcontainers) | `AirportApiIT`, `FlightApiIT` | Job `integration-test` (`mvn verify -DskipUnitTests`) |
 | System | beide Services und MongoDB mit docker compose, echte HTTP-Aufrufe | `Code/P2/system-test/system-test.sh` | Job `system-test` |
 
-Maven trennt die Stufen über den Namen: `*Test` läuft mit Surefire (`mvn test`), `*IT` mit Failsafe (`mvn verify`). `FlightServiceIntegrationTest` braucht keine Datenbank und läuft deshalb bei den Unit Tests mit.
+Maven trennt die Stufen über den Namen: `*Test` läuft mit Surefire (`mvn test`), `*IT` mit Failsafe (`mvn verify`). `FlightServiceIntegrationTest` braucht keine Datenbank und läuft deshalb bei den Unit Tests mit. In P2 haben wir ihn Integrationstest genannt, weil er Flugservice und `AirportClient` zusammen prüft. In P3 zählen wir nur Tests mit echter Datenbank als Integrationstests.
 
 Integrationstests:
 
@@ -100,7 +100,20 @@ Testergebnis im finalen Workflow (Run 1): 5 + 4 Unit Tests, 3 + 3 Integrationste
 
 Auf dem Branch `feature/P3-fehlerfall` erwartet ein Test in `AirportControllerTest` absichtlich `200` statt `409`.
 
-*(Ergebnis folgt nach dem Lauf)*
+Ergebnis ([Run](https://github.com/ellisabeta/M324-Gruppe1/actions/runs/39165213743)):
+
+- Build: beide grün
+- Unit Tests flughafen-service: rot
+- Unit Tests flug-service: grün, läuft wegen `fail-fast: false` trotzdem fertig
+- Integrationstests und Systemtest: übersprungen
+
+Im Log steht direkt, welcher Test in welcher Zeile fehlschlägt:
+
+```text
+AirportControllerTest.rejectsDuplicateAirportCode:64 Status expected:<200> but was:<409>
+```
+
+Der Testreport wurde trotzdem als Artefakt hochgeladen. Die Pipeline verhält sich also so, wie wir wollen: Ein Fehler stoppt die späteren Stufen, und man findet ihn schnell. Der Branch wird nicht gemergt.
 
 ## 5. Finale Variante
 
