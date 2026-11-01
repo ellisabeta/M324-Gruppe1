@@ -8,6 +8,11 @@ Wir verwenden **Docker Compose**, um den Flughafenservice, den Flugservice und M
 Diese Variante passt zu unserem Projekt, da beide Java-Services bereits eigene Dockerfiles besitzen. Compose ermöglicht einen einfachen, wiederholbaren Start der gesamten Anwendung mit einem Befehl. Für unser kleines Projekt ist dafür keine zusätzliche Plattform wie Kubernetes notwendig.
 
 ## Verwendete Umgebung
+- **Dev / lokale Testumgebung**: Die Anwendung läuft auf unseren Rechnern mit Docker Desktop und Docker Compose. Flughafenservice, Flugservice und MongoDB werden gemeinsam gestartet. Diese Umgebung verwenden wir für Entwicklung und manuelle Tests sowie für die praktische Rollback-Prüfung.
+
+- **CI-Testumgebung**: GitHub Actions führt automatisierte Tests auf einem Ubuntu-Runner aus. Für den Systemtest werden eigene Container gestartet und anschliessend inklusive Testdaten wieder entfernt.
+
+- **Konfiguration und Secrets**: Datenbankverbindungen und Service-Adressen werden über Umgebungsvariablen übergeben. Die lokale MongoDB verwendet keine Zugangsdaten. Echte Passwörter und Tokens dürfen nicht im Code stehen und müssen bei einer späteren Serverbereitstellung separat hinterlegt werden.
 
 ## Smoke Test nach Deployment Nachweis
 
