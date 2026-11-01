@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 
 import ch.tbz.flug.airport.AirportClient;
 import ch.tbz.flug.airport.AirportSummary;
+import ch.tbz.flug.exceptions.flightExceptions.InvalidFlightTimeException;
+import ch.tbz.flug.exceptions.flightExceptions.SameAirportException;
+import ch.tbz.flug.exceptions.flightExceptions.UnknownAirportException;
 
 @Service
 public class FlightService {

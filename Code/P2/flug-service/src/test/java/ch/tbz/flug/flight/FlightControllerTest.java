@@ -14,6 +14,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import ch.tbz.flug.exceptions.flightExceptions.SameAirportException;
+import ch.tbz.flug.exceptions.flightExceptions.UnknownAirportException;
+
 @WebMvcTest(FlightController.class)
 class FlightControllerTest {
 

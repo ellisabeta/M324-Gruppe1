@@ -20,6 +20,7 @@ import org.springframework.web.client.RestClient;
 
 import ch.tbz.flug.airport.AirportClient;
 import ch.tbz.flug.airport.AirportClientProperties;
+import ch.tbz.flug.exceptions.flightExceptions.UnknownAirportException;
 
 /**
  * Prüft die Kommunikation vom Flugservice zum Flughafenservice.

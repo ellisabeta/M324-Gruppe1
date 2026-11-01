@@ -1,4 +1,4 @@
-package ch.tbz.flug.flight;
+package ch.tbz.flug.exceptions.flightExceptions;
 
 import java.time.Instant;
 
