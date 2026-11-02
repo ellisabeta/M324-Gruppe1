@@ -35,7 +35,7 @@ compose=(
   docker compose
   --project-directory "$BASE"
   -p "$project"
-  -f "$BASE/docker-compose.yml"
+  -f "$BASE/docker-compose.deploy.yml"
 )
 services=(flughafen-service flug-service)
 work=$(mktemp -d)
@@ -50,7 +50,7 @@ fail() {
   exit 1
 }
 
-config_hash=$(sha256sum "$BASE/docker-compose.yml" | cut -d ' ' -f1)
+config_hash=$(sha256sum "$BASE/docker-compose.deploy.yml" | cut -d ' ' -f1)
 
 # Same host/API ports as the existing P2 compose file. No data is written.
 smoke() {

@@ -9,7 +9,7 @@ trap 'rm -rf "$SIM_ROOT"' EXIT
 export SIM_ROOT
 mkdir -p "$SIM_ROOT/bin" "$SIM_ROOT/project/rollback"
 cp "$HERE/rollback.sh" "$SIM_ROOT/project/rollback/"
-cp "$HERE/../docker-compose.yml" "$SIM_ROOT/project/"
+cp "$HERE/../docker-compose.deploy.yml" "$SIM_ROOT/project/"
 printf 'sha256:%064d\n' 1 > "$SIM_ROOT/old-airport"
 printf 'sha256:%064d\n' 2 > "$SIM_ROOT/old-flight"
 cp "$SIM_ROOT/old-airport" "$SIM_ROOT/flughafen-service"
@@ -162,7 +162,7 @@ cmp "$checkpoint" "$SIM_ROOT/checkpoint-before"
 rm "$SIM_ROOT/http-fail"
 echo 'PASS 7: failed verification is not reported as success'
 
-echo '# changed configuration' >> "$SIM_ROOT/project/docker-compose.yml"
+echo '# changed configuration' >> "$SIM_ROOT/project/docker-compose.deploy.yml"
 expect_failure 1 bash "$script" restore
 echo 'PASS 8: changed Compose configuration rejected'
 
