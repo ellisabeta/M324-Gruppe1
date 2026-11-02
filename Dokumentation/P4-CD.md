@@ -129,14 +129,38 @@ docker stats --no-stream m324-flughafen-service m324-flug-service m324-mongo
 Bei einem fehlerhaften Update setzen wir beide Services auf die zuletzt gesicherten, funktionierenden Docker-Images zurück. Dafür verwenden wir das Bash-Skript [`Code/P2/rollback/rollback.sh`](../Code/P2/rollback/rollback.sh).
 
 ### Ablauf des Rollbacks:
-- **Vor dem Update:** `rollback.sh save` ausführen. Das Skript prüft die laufenden Services und speichert ihre Image-IDs.
-- **Bei einem Fehler:** Den Rollback manuell mit `rollback.sh restore` starten.
-- **Wiederherstellung:** Beide Anwendungscontainer werden mit den gesicherten Images gestartet. MongoDB bleibt unverändert.
-- **Überprüfung:** Das Skript kontrolliert die Image-IDs und HTTP-Antworten der Services.
-- **Erfolgsmeldung:** Erst wenn alle Prüfungen erfolgreich sind, wird der Rollback als erfolgreich gemeldet.
+1. Funktionierenden Stand vor dem Update sichern:
+
+```wsl
+bash Code/P2/rollback/rollback.sh save
+```
+
+Erwartete Meldung: SAVE_OK. Die Image-IDs beider Services werden lokal gespeichert.
+
+2. Gesicherten Stand anzeigen:
+
+```wsl
+bash Code/P2/rollback/rollback.sh status
+```
+
+3. Nach einem fehlerhaften Update den gesicherten Stand wiederherstellen:
+
+```wsl
+bash Code/P2/rollback/rollback.sh restore
+```
+
+Beide Anwendungscontainer werden mit den gesicherten Images gestartet. MongoDB bleibt unverändert. Nach erfolgreicher Image- und HTTP-Prüfung erscheint RESTORE_OK.
+
+4. Containerzustand kontrollieren:
+
+```wsl
+docker compose -f Code/P2/docker-compose.deploy.yml -p p2 ps
+```
+
+Wichtig: Nach einem fehlerhaften Update nicht erneut save ausführen, da dies den bisherigen Checkpoint überschreiben könnte. Ohne Versionsänderung zwischen Sicherung und Wiederherstellung wird nur die Wiederherstellung derselben Version geprüft.
 
 ### Überprüfung durch Simulation:
-- **Simulation starten:** `simulate.sh` ausführen.
+- **Simulation starten:** ```bash Code/P2/rollback/simulate.sh``` ausführen.
 - **Testumgebung:** Das echte Rollback-Skript wird ausgeführt. Docker-Befehle und HTTP-Antworten werden durch kontrollierte Testantworten ersetzt.
 - **Fehlerfälle prüfen:** Fehlende Sicherungen, nicht verfügbare Images und ein teilweise fehlgeschlagener Rollback werden gezielt simuliert.
 - **Wiederherstellung prüfen:** Nach einem simulierten Fehler wird geprüft, ob eine erneute Ausführung den gesicherten Stand erfolgreich wiederherstellt.
