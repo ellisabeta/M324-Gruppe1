@@ -159,6 +159,9 @@ docker compose -f Code/P2/docker-compose.deploy.yml -p p2 ps
 
 Wichtig: Nach einem fehlerhaften Update nicht erneut save ausführen, da dies den bisherigen Checkpoint überschreiben könnte. Ohne Versionsänderung zwischen Sicherung und Wiederherstellung wird nur die Wiederherstellung derselben Version geprüft.
 
+#### Nachweis Rollback:
+![alt text](Nachweis-Rollback.png)
+
 ### Überprüfung durch Simulation:
 1. Simulation starten
 
