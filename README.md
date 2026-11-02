@@ -16,6 +16,10 @@
 - P3: [Continuous Integration](./Dokumentation/P3-CI.md)
 - P3b: [Artefakt-Repository](./Dokumentation/P3b-Artefakt-Repository.md)
 - P4: [Continuous Deployment](./Dokumentation/P4-CD.md)
+<<<<<<< Updated upstream
+=======
+- Z1: [Kennzahlen / Continuous Improvement](./Dokumentation/Z1-Kennzahlen.md)
+>>>>>>> Stashed changes
 
 Gehen Sie vor wie in diesem Dokument beschrieben.
 

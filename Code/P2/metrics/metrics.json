@@ -1,0 +1,72 @@
+{
+  "generated": "2026-11-02 07:37 UTC",
+  "ci": {
+    "runs_total": 40,
+    "runs_success": 29,
+    "success_rate": 72.5,
+    "main_failure_rate": 50.0,
+    "duration_median_min": 1.1,
+    "duration_max_min": 4.6,
+    "mttr_median_h": null,
+    "failures_restored": 0,
+    "deployments": [
+      {
+        "date": "2026-11-01",
+        "ref": "main",
+        "conclusion": "success"
+      },
+      {
+        "date": "2026-11-01",
+        "ref": "main",
+        "conclusion": "success"
+      }
+    ],
+    "first_run": "2026-09-20",
+    "last_run": "2026-11-01"
+  },
+  "pr": {
+    "closed": 9,
+    "merged": 8,
+    "lead_time_median_h": 1.6,
+    "lead_time_max_h": 181.9
+  },
+  "git": {
+    "commits": 65,
+    "merges": 18,
+    "per_author": {
+      "GabrielArocha7": 24,
+      "Tahssin": 19,
+      "g1uLiax": 13,
+      "elliisabeta": 7,
+      "TahssinAl": 1,
+      "Elili": 1
+    },
+    "per_week": {
+      "2026-W34": 16,
+      "2026-W35": 8,
+      "2026-W36": 5,
+      "2026-W37": 1,
+      "2026-W38": 12,
+      "2026-W39": 11,
+      "2026-W40": 2,
+      "2026-W42": 4,
+      "2026-W44": 6
+    },
+    "fix_commits": 3,
+    "fix_share": 4.6
+  },
+  "code": {
+    "flughafen-service": {
+      "main_loc": 281,
+      "test_loc": 166,
+      "tests": 9,
+      "test_ratio": 0.59
+    },
+    "flug-service": {
+      "main_loc": 334,
+      "test_loc": 265,
+      "tests": 10,
+      "test_ratio": 0.79
+    }
+  }
+}
