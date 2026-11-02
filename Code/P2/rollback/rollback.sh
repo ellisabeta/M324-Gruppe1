@@ -22,7 +22,7 @@ for tool in docker jq curl flock sha256sum; do
   }
 done
 
-# Local checkpoint and exclusive lock
+# Saves local checkpoint and exclusive lock
 state="$HERE/.state/$project"
 mkdir -p "$state"
 exec 9>"$state/lock"
@@ -52,7 +52,7 @@ fail() {
 
 config_hash=$(sha256sum "$BASE/docker-compose.deploy.yml" | cut -d ' ' -f1)
 
-# Same host/API ports as the existing P2 compose file. No data is written.
+# Checks the two functions 1. calling Airport 2. send invalid flight
 smoke() {
   local status
 
@@ -97,11 +97,12 @@ if [[ $action == status ]]; then
   exit 0
 fi
 
-# Save the current, verified application pair
+# Save the current two docker images
 if [[ $action == save ]]; then
   airport=$(running_image flughafen-service) || fail 'Airport container not running.'
   flight=$(running_image flug-service) || fail 'Flight container not running.'
   smoke || fail 'Smoke failed. Existing checkpoint was not replaced.'
+
   # Dedicated local tags keep these images referenced; restore still uses immutable IDs.
   docker image tag "$airport" "m324-rollback/$project-airport:saved"
   docker image tag "$flight" "m324-rollback/$project-flight:saved"
@@ -115,7 +116,7 @@ if [[ $action == save ]]; then
   exit 0
 fi
 
-# Restore the saved application pair
+# Cheking the checkpoint and the saved image ids
 [[ -f $checkpoint ]] || fail 'No checkpoint. Do not guess a previous version.'
 jq -e --arg project "$project" --arg config "$config_hash" \
   '.project == $project and .compose_sha256 == $config and
@@ -125,7 +126,7 @@ jq -e --arg project "$project" --arg config "$config_hash" \
 airport=$(jq -r '.airport' "$checkpoint")
 flight=$(jq -r '.flight' "$checkpoint")
 
-# Preflight both images before changing either service; no registry connection required.
+# Restoring and checking the services that start the images
 docker image inspect "$airport" >/dev/null || fail 'Saved airport image missing locally.'
 docker image inspect "$flight" >/dev/null || fail 'Saved flight image missing locally.'
 jq -n --arg airport "$airport" --arg flight "$flight" \
@@ -136,6 +137,7 @@ if ! "${compose[@]}" -f "$work/images.json" up -d --no-deps --no-build --pull ne
   log 'RESTORE_FAILED: Compose error. Check containers/logs; checkpoint retained. Retry restore after repair.'
   exit 2
 fi
+
 # Approximately 90 seconds plus bounded HTTP/Docker command execution time.
 for ((attempt = 1; attempt <= 30; attempt++)); do
   if [[ $(running_image flughafen-service) == "$airport" ]] && \

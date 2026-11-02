@@ -160,11 +160,13 @@ docker compose -f Code/P2/docker-compose.deploy.yml -p p2 ps
 Wichtig: Nach einem fehlerhaften Update nicht erneut save ausführen, da dies den bisherigen Checkpoint überschreiben könnte. Ohne Versionsänderung zwischen Sicherung und Wiederherstellung wird nur die Wiederherstellung derselben Version geprüft.
 
 ### Überprüfung durch Simulation:
-- **Simulation starten:** ```bash Code/P2/rollback/simulate.sh``` ausführen.
-- **Testumgebung:** Das echte Rollback-Skript wird ausgeführt. Docker-Befehle und HTTP-Antworten werden durch kontrollierte Testantworten ersetzt.
-- **Fehlerfälle prüfen:** Fehlende Sicherungen, nicht verfügbare Images und ein teilweise fehlgeschlagener Rollback werden gezielt simuliert.
-- **Wiederherstellung prüfen:** Nach einem simulierten Fehler wird geprüft, ob eine erneute Ausführung den gesicherten Stand erfolgreich wiederherstellt.
-- **Laufende Anwendung schützen:** Die Simulation verändert keine echten Container oder Daten.
+1. Simulation starten
+
+```bash 
+bash Code/P2/rollback/simulate.sh
+```
+
+Die Simulation verändert keine echten Container oder Daten.
 
 ---
 
