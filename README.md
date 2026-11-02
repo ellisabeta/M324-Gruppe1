@@ -10,11 +10,16 @@
 - Zeitlogging: [im Teams Channel](https://tbzedu.sharepoint.com/:x:/r/sites/IT_AP23b_M324-Gruppe1-/_layouts/15/doc2.aspx?action=edit&sourcedoc=%7B8c30bce7-a5f7-4670-9580-e280c390eb0d%7D&wdExp=TEAMS-TREATMENT&web=1)
 - Lernjournal Elizaveta: [Google Docs](https://docs.google.com/document/d/1fe8JMj8iVM-h7FMc8lSktaMFwDHNqKZlrHcpDJOu9jE/edit?usp=sharing)
 - Lernjournal Gabriel: [link](https://github.com/GabrielArocha7/Lernjournal_M324_GabrielArocha)
+- Lernjournal Giulia: [link](https://docs.google.com/document/d/13KqzUGjf28vKzNWRfh1ZtGjmljSfKQsHSi8lVvc3isw/edit?tab=t.0#heading=h.clhn5vppti5h)
 
 ## Dokumentation
 - P3: [Continuous Integration](./Dokumentation/P3-CI.md)
 - P3b: [Artefakt-Repository](./Dokumentation/P3b-Artefakt-Repository.md)
 - P4: [Continuous Deployment](./Dokumentation/P4-CD.md)
+<<<<<<< Updated upstream
+=======
+- Z1: [Kennzahlen / Continuous Improvement](./Dokumentation/Z1-Kennzahlen.md)
+>>>>>>> Stashed changes
 
 Gehen Sie vor wie in diesem Dokument beschrieben.
 
